@@ -112,6 +112,7 @@ $color-failed: #ff4b4b;
       margin: 24px 0;
       transition: border-color 0.3s, background 0.3s;
       position: relative;
+      margin-bottom: 10px;
     }
 
     .drop-zone:hover, .drop-zone.dragover {
@@ -884,5 +885,9 @@ ease;
   }
 .list_o_u_f{
   color: #BBBBBB;
-  font-size: 0.75rem;
+    font-size: 0.75rem;
+    margin-top: 17px;
+    margin-bottom: 10px;
+    border-top: 1px solid #393939;
+    padding-top: 11px;
 }

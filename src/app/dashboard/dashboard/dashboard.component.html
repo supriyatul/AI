@@ -54,6 +54,7 @@
               <!-- Hidden input used to replace a specific file -->
               <input id="replaceInput" type="file" accept=".xls,.xlsx" (change)="onReplaceSelected($event)" hidden />
             </div>
+            <div class="list_o_u_f">List of uploaded files</div>
             <div style="display: flex
 ;
     flex-direction: row;
@@ -79,11 +80,12 @@
                   </div>
                 </div>
               </div> -->
+              
               <div class="file-list" style="display: flex
 ;
     flex-direction: column;
    " *ngIf="files.length > 0">
-                <div class="list_o_u_f">List of uploaded files</div>
+                
 
                 <div cdkDropList (cdkDropListDropped)="drop($event)" class="file-ul">
                   <div *ngFor="let file of files; let i = index" cdkDrag class="file-item_wrap"
