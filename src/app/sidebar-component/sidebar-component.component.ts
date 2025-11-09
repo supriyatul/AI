@@ -82,17 +82,32 @@ export class SidebarComponent implements OnInit {
     this.router.navigate([item.link]);
   }
   loadItems(id: string) {
+    if (this.loading) return; // Prevent concurrent loads
+    this.loading = true;
+    
     const userData = JSON.parse(localStorage.getItem('loggedin user data') || '{}');
     this._shared_service.getMenus(userData?.email ?? "", id).subscribe({
       next: (menus: MenuItem[]) => {
-        this.menuItems.set([...this.menuItems(), ...menus.map(e => ({
+        console.log("menus", menus);
+        // If id is empty, reset the list instead of appending
+        const mappedMenus = menus.map(e => ({
           ...e,
           icon: '',
           link: `/backend/Dashboard/${e._id}`
-        }))])
+        }));
+        
+        if (!id) {
+          // Reset list when id is empty (initial load)
+          this.menuItems.set(mappedMenus);
+        } else {
+          // Append for pagination/scroll loads
+          this.menuItems.set([...this.menuItems(), ...mappedMenus]);
+        }
+        this.loading = false;
       },
       error: (err) => {
         console.error('Error loading menu items:', err);
+        this.loading = false;
       }
     });
   }
@@ -112,6 +127,9 @@ export class SidebarComponent implements OnInit {
   }
 
   toggleSidebar(): void {
+   
+    this.menuItems.set([]);
+    this.loadItems('');
     this.isCollapsed = !this.isCollapsed;
     this.openDropdown = null;
   }
