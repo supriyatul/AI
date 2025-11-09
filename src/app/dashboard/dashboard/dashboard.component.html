@@ -155,16 +155,17 @@
 
 
 <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="15">
-            <ng-container >
-              <button  class="upload-btn-Cancel"
-                >
+            <ng-container>
+              <button class="upload-btn-Cancel"
+                (click)="cancelUpload()"
+                [disabled]="isUploading || files.length === 0 || allFilesUploaded">
                 Cancel
               </button>
             </ng-container>
             <ng-container *ngIf="!allFilesUploaded; else submitBlock">
               <button (click)="uploadAll()" class="upload-btn"
-                [disabled]="allFilesUploaded || files.length !== msg.options?.length">
-                Upload All
+                [disabled]="allFilesUploaded || files.length !== msg.options?.length || isUploading">
+                {{ isUploading ? 'Uploading...' : 'Upload All' }}
               </button>
             </ng-container>
 

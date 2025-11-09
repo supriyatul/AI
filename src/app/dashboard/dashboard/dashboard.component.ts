@@ -80,6 +80,7 @@ export class DashboardComponent {
   // Track the order and state of file uploads
   uploadOrder: string[] = [];
   uploadInProgress = false;
+  isUploading = false; // Track when files are being uploaded
   replaceIndex: number | null = null;
   allFilesUploaded: boolean = false;
   disabledSubmit: boolean = true
@@ -422,8 +423,13 @@ export class DashboardComponent {
   //   reader.onload = (e: any) => {
   //     const data = new Uint8Array(e.target.result);
   //     const workbook = XLSX.read(data, { type: 'array' });
-  //     const firstSheet = workbook.SheetNames[0];
   //     const worksheet = workbook.Sheets[firstSheet];
+  //     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+  //     console.log(`📘 ${file.name} content:`, jsonData);
+  //     this.excelData.push({ name: file.name, data: jsonData });
+  //   };
+  //   reader.readAsArrayBuffer(file);
+  // }
   //     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
   //     console.log(`📘 ${file.name} content:`, jsonData);
   //     this.excelData.push({ name: file.name, data: jsonData });
@@ -438,6 +444,12 @@ export class DashboardComponent {
       alert('Please select at least one Excel file.');
       return;
     }
+    
+    if (this.isUploading) {
+      return; // Prevent multiple concurrent uploads
+    }
+
+    this.isUploading = true; // Set uploading flag
 
     // Only upload files that are not yet successful
     const filesToUpload = this.files.filter(file => {
@@ -497,6 +509,8 @@ const file_type = baseName.toUpperCase() || 'EXCEL';
         alert(`Error uploading ${file.name}: ${err && err.message ? err.message : 'Unknown error'}`);
       }
     }
+
+    this.isUploading = false; // Reset uploading flag when done
 
     // Check if all files are now successful
     const allNowSuccess = this.files.every(f => this.fileStatus[f.name]?.status === 'success');
@@ -657,6 +671,41 @@ const file_type = baseName.toUpperCase() || 'EXCEL';
       const scrollMe = document.querySelector('.chat-container') as HTMLElement;
       if (scrollMe) scrollMe.scrollTop = scrollMe.scrollHeight;
     });
+  }
+
+  /** Cancel action: remove only files with failed status (keep pending/uploading/success) */
+  cancelUpload(): void {
+    // If uploading is in progress, don't allow canceling
+    if (this.isUploading) return;
+
+    // Remove only files that have status 'failed'
+    const remainingFiles: File[] = [];
+    const remainingStatus: { [key: string]: { status: 'pending' | 'uploading' | 'success' | 'failed', reason?: string } } = {};
+
+    for (const f of this.files) {
+      // Treat missing status as removable (so Cancel works when fileStatus is empty)
+      const status = this.fileStatus[f.name]?.status;
+      const isRemovable = status === 'failed' || typeof status === 'undefined';
+
+      if (!isRemovable) {
+        // keep files that are pending/uploading/success
+        remainingFiles.push(f);
+        if (this.fileStatus[f.name]) {
+          remainingStatus[f.name] = this.fileStatus[f.name];
+        }
+      } else {
+        // remove failed or unknown-status file entries
+        if (this.fileStatus[f.name]) delete this.fileStatus[f.name];
+      }
+    }
+
+    this.files = remainingFiles;
+    this.fileStatus = { ...remainingStatus };
+
+    // If after removal there are no files left, reset allFilesUploaded
+    if (this.files.length === 0) {
+      this.allFilesUploaded = false;
+    }
   }
 
   // end
