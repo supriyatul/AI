@@ -26,7 +26,7 @@ export class SidebarComponent implements OnInit {
   menuItems = signal<MenuItem[]>([])
   primaryMenu: any[] = [
     { project_name: 'New Project', icon: 'New Project.svg', link: '/backend', _id: '' },
-    { project_name: 'Old Project', icon: 'Old Project.svg', link: '/OldProject', _id: '' }
+    { project_name: 'Old Project', icon: 'Old Project.svg', link: '/backend', _id: '' }
   ];
   secondaryMenu: any[] = [
     // { label: 'Support', icon: 'help', link: '/support' },
@@ -78,6 +78,11 @@ export class SidebarComponent implements OnInit {
   }
 
   onMenuClickPrimary(item: any) {
+    console.log("item",item);
+    if(item?.project_name == "Old Project"){
+      this.isCollapsed = true
+     
+    }
     this.isCollapsed = true
     this.router.navigate([item.link]);
   }
