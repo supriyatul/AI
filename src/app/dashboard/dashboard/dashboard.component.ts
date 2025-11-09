@@ -250,6 +250,9 @@ export class DashboardComponent {
       }
     })
   }
+  download_all_temp(){
+    this._shared_service.downloadTemplates().subscribe((res:any)=>{});
+  }
   onAnswer(choice: string, key: string, msg: any) {
     console.log("msg", msg)
 

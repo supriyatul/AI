@@ -165,6 +165,16 @@ export class SharedService {
         })
       )
   }
+  downloadTemplates(){
+    return this.http.get<any>(this.API_URL + `v1/analysis/downloadTemplates`).pipe(
+        catchError(err => {
+          console.log(err)
+          // this.errorHandler(err)
+          return this.err_hand(err);
+
+        })
+      )
+  }
   getProjectDetails(id: string) {
     return this.http.post<any>(this.API_URL + `v1/analysis/getProjectDetails`, { recordID: id })
       .pipe(
