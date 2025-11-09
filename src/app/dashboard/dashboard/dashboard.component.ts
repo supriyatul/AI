@@ -517,12 +517,16 @@ const file_type = baseName.toUpperCase() || 'EXCEL';
     if (allNowSuccess) {
       alert('✅ All files uploaded successfully!');
       this.allFilesUploaded = true;
-      this.disabledSubmit = false
-      // Trigger next bot step
+      this.disabledSubmit = false;
+      // Automatically submit when all files are uploaded successfully
+      this.submitFiles();
     } else {
       const successCount = this.files.filter(f => this.fileStatus[f.name]?.status === 'success').length;
       const failedCount = this.files.length - successCount;
-      // Optionally alert or update UI
+      // Show alert for partial success
+      if (successCount > 0) {
+        alert(`${successCount} files uploaded successfully. ${failedCount} files failed.`);
+      }
     }
   }
 
