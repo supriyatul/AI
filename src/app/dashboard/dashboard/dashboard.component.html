@@ -7,6 +7,8 @@
     <div *ngFor="let msg of messages(); let i = index; trackBy: trackByMsg;"
       [ngClass]="{ 'bot': msg.from === 'bot', 'user': msg.from === 'user' }" class="message">
 
+
+      
       <div class="bubble">
         <ng-container *ngIf="msg.confirmation_message === 1">
           <div [innerHTML]="msg.response.confirmation_message" id="style-1" class="summery_view"></div>
