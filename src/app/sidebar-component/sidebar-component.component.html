@@ -13,7 +13,7 @@
         <!-- Primary Menu -->
         <ul class="nav-list primary-nav overflowX">
             <ng-container *ngFor="let item of primaryMenu">
-                <li class="nav-item">
+                <li class="nav-item" title="{{ item.project_name }}">
                     <a class="nav-link" (click)="onMenuClickPrimary(item)">
                         <img [src]="'../../assets/images/' + item.icon" />
                         <!-- <span class="material-symbols-rounded">{{ item.icon }}</span> -->

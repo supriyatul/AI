@@ -16,20 +16,23 @@ $color-failed: #ff4b4b;
   overflow: hidden;
 
   .new_project_cont {
-    color: #fff;
+    
     position: static;
     display: flex;
     top: 0;
     padding-bottom: 15px;
     text-transform: uppercase;
-
+    padding-top: 20px;
+    padding-left: 20px;
+        font-size: 1.12rem;
+    letter-spacing: 0.02rem;
     span {
-      font-weight: 1rem;
+      color: #F1F1F1;
     }
 
     p {
+      color: #F1F1F1;
       margin: 0;
-      font-size: 1rem;
       font-weight: 900;
     }
   }
@@ -43,6 +46,8 @@ $color-failed: #ff4b4b;
   position: sticky;
   bottom: 0;
   color: white;
+      margin-left: 19px;
+    margin-right: 19px;
 
   .glob {
     margin-right: 10px !important;
@@ -76,6 +81,8 @@ $color-failed: #ff4b4b;
   padding: 16px;
   display: flex;
   flex-direction: column;
+  padding-left: 33px;
+    padding-right: 33px;
 }
 
 .message {
@@ -171,7 +178,7 @@ $color-failed: #ff4b4b;
   display: flex;
     align-items: center;
     gap: 4px;
-    margin-top: 7px;
+    margin-top: 0px;
     padding-bottom: 20px;
 }
 
@@ -546,7 +553,7 @@ margin-right: 7px;
 .file-info {
   background: #2b2b2b;
   border-radius: 8px;
-  padding: 12px 20px;
+  padding: 15px 20px;
   margin-bottom: 10px;
   color: #fff;
   // width: 350px;
@@ -560,8 +567,9 @@ margin-right: 7px;
   .file-name {
     display: block;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 0.75rem;
     margin-bottom: 6px;
+    color: #BBBBBB;
   }
 
   .status-indicator {
@@ -577,8 +585,9 @@ margin-right: 7px;
       margin-top: 6px;
       animation: fillBar 1s ease-in-out forwards;
       position: absolute;
-      left: 0;
-      bottom: 0;
+      bottom: 8px;
+      width: 95% !important;
+left: calc((100% - 95%) / 2);
     }
 
     .status {
@@ -615,7 +624,7 @@ margin-right: 7px;
 
   /* 🟩 Success */
   &.success {
-    border: 1px solid limegreen !important;
+    // border: 1px solid limegreen !important;
 
     .progress-bar {
       background: limegreen !important;
@@ -626,9 +635,14 @@ margin-right: 7px;
       color: limegreen !important ;
       animation: fadeIn 0.6s ease forwards 0.8s;
 
-      &::before {
-        content: '✅ ';
+      &::after {
+        content: '';
         animation: checkmarkPop 0.4s ease forwards 1s;
+        width: 18px;
+        height: 18px;
+        background-image: url('../../../assets/images/mdi_tick.png');
+        background-size: cover;
+        background-attachment: fixed;
       }
     }
   }
@@ -756,18 +770,65 @@ action-btn {
 
 /* White icon and text */
 .white-icon {
-  color: white !important;
+  color: #BBBBBB !important;
   font-size: 0.75rem;
+}
+::ng-deep .action-btn.white-icon.mat-mdc-button:hover,
+::ng-deep .action-btn.white-icon.mat-mdc-button:focus,
+::ng-deep .action-btn.white-icon.mat-mdc-button:active {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Remove the internal MDC ripple background overlay on hover */
+::ng-deep .action-btn.white-icon .mdc-button__ripple::before,
+::ng-deep .action-btn.white-icon .mdc-button__ripple::after {
+  background-color: transparent !important;
 }
 
 /* Blue text and icon for Download */
 .blue-download {
   color: #1976d2 !important; /* Material blue */
   font-size: 0.72rem;
+  
 }
+::ng-deep .action-btn.blue-download.mat-mdc-button:hover,
+::ng-deep .action-btn.blue-download.mat-mdc-button:focus,
+::ng-deep .action-btn.blue-download.mat-mdc-button:active {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+::ng-deep .action-btn.blue-download{
+  cursor: pointer;
+  .mdc-button__label{
+    
+  display: flex;
+      justify-content: center;
+    align-items: center;
+    img{
+      margin-right: 7px;
+    }
+}
+}
+/* Remove the internal MDC ripple background overlay on hover */
+::ng-deep .action-btn.blue-download .mdc-button__ripple::before,
+::ng-deep .action-btn.blue-download .mdc-button__ripple::after {
+  background-color: transparent !important;
+}
+
 .file-actions_vew { 
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
+  .file_name_vkd{
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    color: #BBBBBB;
+    img{
+      margin-right: 10px;
+    }
+  }
 }
 .file-item_wrap{
   display: flex;flex-direction: column;
@@ -835,6 +896,42 @@ ease;
   max-height:550px;
   overflow:auto;
   margin-bottom: 28px;
+}
+.download-file {
+  background-color: #363636;
+  border-radius: 13px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding-inline: 16px;
+  padding-block: 8px;
+  cursor: pointer;
+  color: #F6F6F6;
+  text-decoration: none;
+}
+
+.download-excel {
+  display: grid;
+  justify-content: center;
+  justify-items: stretch;
+}
+
+.download-text {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.download-sub-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #949494;
+}
+
+.wrapper {
+  display: flex;
+  margin-block: 20px;
+  gap: 17px;
 }
 
 // end

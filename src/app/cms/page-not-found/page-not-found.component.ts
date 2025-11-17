@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-page-not-found',
@@ -6,6 +7,12 @@ import { Component } from '@angular/core';
   templateUrl: './page-not-found.component.html',
   styleUrl: './page-not-found.component.scss'
 })
-export class PageNotFoundComponent {
+export class PageNotFoundComponent implements OnInit {
+  constructor(private router: Router) {}
 
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.router.navigate(['/backend']);
+    }, 2000);
+  }
 }

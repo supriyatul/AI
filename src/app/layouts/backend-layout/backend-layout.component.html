@@ -1,23 +1,40 @@
-<div fxLayout="row" fxFill>
- 
- <app-sidebar></app-sidebar> 
+<!-- <div fxLayout="row" fxFill class="main-page">
+
+  <div>
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <main fxLayout="column" class="main-content">
+
+    <header class="fixed-header">
+      <app-backend-header></app-backend-header>
+    </header>
 
 
-  <main  fxLayout="column" class="main-content">
-
-  <header class="fixed-header">
-    <app-backend-header></app-backend-header>
-  </header>
-
- 
-  <section class="content-area" fxFlex>
-    <router-outlet></router-outlet>
-  </section>
+    <section class="content-area" fxFlex>
+      <router-outlet></router-outlet>
+    </section> -->
 
 
-  <!-- <footer class="fixed-footer">
+<!-- <footer class="fixed-footer">
     <app-footer></app-footer>
   </footer> -->
-</main>
+<!-- </main>
 
+</div> -->
+
+<div class="container" [class.dashboard-route]="isDashboardRoute()">
+  <div class="content-area">
+    <section class="content-area" fxFlex>
+      <router-outlet></router-outlet>
+    </section>
+  </div>
+  <div class="header">
+    <header class="fixed-header">
+      <app-backend-header></app-backend-header>
+    </header>
+  </div>
+  <div class="sidebar">
+    <app-sidebar></app-sidebar>
+  </div>
 </div>

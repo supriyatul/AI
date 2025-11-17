@@ -1,14 +1,15 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { AuthService } from "../auth/auth.service"; 
+import { AuthService } from "../auth/auth.service";
 import { catchError, exhaustMap, finalize, take } from "rxjs/operators";
 import { Observable, throwError } from "rxjs";
+import { CookieService } from 'ngx-cookie-service';
 import { Router } from "@angular/router";
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
 
-  constructor(private _authService: AuthService, private router: Router) {}
+  constructor(private _authService: AuthService, private router: Router, private cookieService: CookieService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return this._authService.user.pipe(
@@ -17,7 +18,7 @@ export class TokenInterceptor implements HttpInterceptor {
         let modifiedReq = req;
 
         // ✅ Skip setting "Content-Type" for multipart requests
-        const isMultipart = req.url.includes('v1/analysis/validateDataFile') || req.body instanceof FormData;
+        const isMultipart = (req.url.includes('v1/analysis/validateDataFile') || req.url.includes('v1/analysis/uploadFileInChunks')) || req.body instanceof FormData;
 
         if (user && user.token) {
           const headers: any = {
@@ -39,6 +40,7 @@ export class TokenInterceptor implements HttpInterceptor {
         return next.handle(modifiedReq).pipe(
           catchError((error: HttpErrorResponse) => {
             if (error.status === 401) {
+              this.cookieService.deleteAll()
               localStorage.clear();
               window.location.reload();
             }

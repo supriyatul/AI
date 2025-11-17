@@ -1,13 +1,13 @@
 <!-- my-dialog-content.component.html -->
 <div class="custome_idalog">
-  <h2 mat-dialog-title>{{ data.title }}</h2>
+  <div (click)="onCancel()" class="cross"><img src="../../../assets/images/cross_bt.png"></div>
+  <h2 mat-dialog-title class="custom-dialogue-title">Project Name</h2>
 
   <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
     <mat-dialog-content class="mat-typography">
       <div class="custom-input">
         <mat-form-field appearance="fill" class="w-full">
-          <mat-label>Project Name</mat-label>
-          <input matInput placeholder="Enter Project Name" formControlName="project_name" />
+          <input matInput placeholder="Enter your project name here" formControlName="project_name" />
           <mat-error *ngIf="projectForm.get('project_name')?.hasError('required')">
             Project name is required
           </mat-error>
@@ -15,16 +15,9 @@
       </div>
     </mat-dialog-content>
 
-    <mat-dialog-actions align="end">
-      <button mat-button type="button" (click)="onCancel()" style="color: white;">Cancel</button>
-      <button
-  mat-button
-  type="submit"
-  [disabled]="projectForm.invalid"
- class="subm_bt"
->
-  Submit
-</button>
+    <mat-dialog-actions align="end" class="submit-container">
+      <button type="button" (click)="onCancel()" class="cancel-btn">Cancel</button>
+      <button type="submit" [disabled]="projectForm.invalid" class="subm_bt">Create</button>
     </mat-dialog-actions>
   </form>
 </div>

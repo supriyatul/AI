@@ -7,17 +7,49 @@
     <div *ngFor="let msg of messages(); let i = index; trackBy: trackByMsg;"
       [ngClass]="{ 'bot': msg.from === 'bot', 'user': msg.from === 'user' }" class="message">
 
-
-      
       <div class="bubble">
         <ng-container *ngIf="msg.confirmation_message === 1">
-          <div [innerHTML]="msg.response.confirmation_message" id="style-1" class="summery_view"></div>
+<div [innerHTML]="msg.response.confirmation_message" id="style-1" class="summery_view"></div>
+</ng-container>
+
+        <ng-container *ngIf="msg.is_file === 1">
+          <div class="wrapper">
+            <a *ngIf="msg.response.excel_url" href="{{msg.response.excel_url}}" target="_self" class="download-file">
+              <img src="../../../assets/images/excel.svg" />
+              <div class="download-excel">
+                <span class="download-text">Downlod Excel {{msg.response.current_version}}</span>
+                <span class="download-sub-text">Excel File &nbsp;&nbsp;39KB</span>
+              </div>
+              <img src="../../../assets/images/download.png" />
+            </a>
+            <a *ngIf="msg.response.pdf_url" href="{{msg.response.pdf_url}}" target="_self" class="download-file">
+              <img src="../../../assets/images/pdf.svg" />
+              <div class="download-excel">
+                <span class="download-text">Downlod PDF {{msg.response.current_version}}</span>
+                <span class="download-sub-text">PDF File &nbsp;&nbsp;39KB</span>
+              </div>
+              <img src="../../../assets/images/download.png" />
+            </a>
+            <a *ngIf="msg.response.word_url" href="{{msg.response.word_url}}" target="_self" class="download-file">
+              <img src="../../../assets/images/word.svg" />
+              <div class="download-excel">
+                <span class="download-text">Downlod Word {{msg.response.current_version}}</span>
+                <span class="download-sub-text">Word File &nbsp;&nbsp;39KB</span>
+              </div>
+              <img src="../../../assets/images/download.png" />
+            </a>
+          </div>
         </ng-container>
+
         <ng-container *ngIf="msg.text.startsWith('typing'); else normalText">
+         
           <div class="typing-indicator">
+             <!-- Inline SVG -->
+
+
+            <!-- <span class="dot"></span>
             <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
+            <span class="dot"></span> -->
           </div>
         </ng-container>
         <ng-template #normalText>{{ msg.text }}</ng-template>
@@ -37,7 +69,7 @@
             <div fxLayout="row" fxLayoutAlign="space-between center">
               <div fxLayout="column" class="lef_up_con">
                 <h4>Upload Files</h4>
-                <p>Please do upload the file in a given sequence.</p>
+                <p>Ensure the files are named exactly as in the template zip.</p>
               </div>
               <div class="dow_temp" fxLayout="column" (click)="download_all_temp()">
                 <div >Download All Template</div>
@@ -90,6 +122,7 @@
                     (cdkDragStarted)="isDragging = true" (cdkDragEnded)="isDragging = false"
                     [ngClass]="{'failed': fileStatus[file.name]?.status === 'failed'}">
 <div class="file-actions_vew">
+  <div class="file_name_vkd"><img src="../../../assets/images/solar_file-line-duotone.png">{{ file.name }}</div>
                       <ng-container *ngIf="fileStatus[file.name]?.status !== 'success'; else downloadBtn">
                         <!-- Replace Button -->
                         <button mat-button class="action-btn white-icon" (click)="openReplace(i)">
@@ -111,7 +144,7 @@
 
                       <ng-template #downloadBtn>
                         <button mat-button class="action-btn blue-download" (click)="downloadExcel(i)">
-                          <mat-icon>download</mat-icon>
+                         <img src="../../../assets/images/download.png" >
                           Download Excel
                         </button>
                       </ng-template>
@@ -127,17 +160,17 @@
 
                       <div class="status-indicator">
                         <ng-container *ngIf="fileStatus[file.name]?.status === 'uploading'">
-                          <span>Uploading...</span>
+                          <!-- <span>Uploading...</span> -->
                           <div class="progress-bar" ></div>
                         </ng-container>
 
                         <ng-container *ngIf="fileStatus[file.name]?.status === 'success'">
-                          <!-- <div class="progress-bar" ></div> -->
-                          <span class="status">Uploaded</span>
+                          <div class="progress-bar" ></div>
+                          <span class="status">Successful</span>
                         </ng-container>
 
                         <ng-container *ngIf="fileStatus[file.name]?.status === 'failed'">
-                          <!-- <div class="progress-bar" ></div> -->
+                          <div class="progress-bar" ></div>
                           <span class="status">Failed </span>
                         </ng-container>
                       </div>
@@ -181,29 +214,93 @@
           </div>
         </ng-container>
 
-        <ng-container *ngIf="msg.is_file === 1">
-          <div class="down_wrap">
-            <div *ngIf="msg.response.excel_url" class="down_load_file">
-              <a href="{{msg.response.excel_url}}" target="_self">Downlod Excel {{msg.response.current_version}}</a>
-            </div>
-            <div *ngIf="msg.response.pdf_url" class="down_load_file">
-              <a href="{{msg.response.pdf_url}}" target="_self">Downlod PDF {{msg.response.current_version}}</a>
-            </div>
-            <div *ngIf="msg.response.word_url" class="down_load_file">
-              <a href="{{msg.response.word_url}}" target="_self">Downlod Word {{msg.response.current_version}}</a>
-            </div>
-          </div>
-        </ng-container>
-
+<!-- <ng-container *ngIf="msg.is_file === 1">
+  <div class="down_wrap">
+<div *ngIf="msg.response.excel_url" class="down_load_file">
+<a href="{{msg.response.excel_url}}" target="_self">Downlod Excel {{msg.response.current_version}}</a> 
+</div>
+<div *ngIf="msg.response.pdf_url" class="down_load_file">
+<a href="{{msg.response.pdf_url}}" target="_self">Downlod PDF {{msg.response.current_version}}</a> 
+</div>
+<div *ngIf="msg.response.word_url" class="down_load_file">
+<a href="{{msg.response.word_url}}" target="_self">Downlod Word {{msg.response.current_version}}</a> 
+</div>
+</div>
+</ng-container> -->
+        
       </div>
     </div>
     <div class="message bot">
       <div *ngIf="preload_bot" style="position: absolute;">
         <div class="bubble">
+          <svg width="360" height="80" viewBox="0 0 360 80" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Transparent background -->
+  <rect width="100%" height="100%" fill="transparent"/>
+
+  <!-- Strong metallic chrome gradient -->
+  <defs>
+    <linearGradient id="metallicFlash" x1="0%" y1="0%" x2="100%" y2="0%">
+      <!-- Dark silver -->
+      <stop offset="0%" stop-color="#8a8a8a">
+        <animate attributeName="stop-color"
+                 values="#8a8a8a; #e5e5e5; #8a8a8a"
+                 dur="1.2s"
+                 repeatCount="indefinite"/>
+      </stop>
+
+      <!-- Bright chrome center -->
+      <stop offset="50%" stop-color="#ffffff">
+        <animate attributeName="stop-color"
+                 values="#ffffff; #bfbfbf; #ffffff"
+                 dur="1.2s"
+                 repeatCount="indefinite"/>
+      </stop>
+
+      <!-- Medium silver -->
+      <stop offset="100%" stop-color="#aaaaaa">
+        <animate attributeName="stop-color"
+                 values="#aaaaaa; #f4f4f4; #aaaaaa"
+                 dur="1.2s"
+                 repeatCount="indefinite"/>
+      </stop>
+    </linearGradient>
+  </defs>
+
+  <!-- Metallic flashing text -->
+  <text x="0" y="15"
+        
+        font-size="14"
+        font-weight="700"
+        fill="url(#metallicFlash)">
+    VEDAA is thinking
+  </text>
+
+  <!-- Bouncing dots -->
+  <g transform="translate(165,15)">
+    <circle cx="-12" cy="0" r="4" fill="#ffffff" opacity="0.4">
+      <animate attributeName="cy" values="0;-7;0" dur="1s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="1s" repeatCount="indefinite"/>
+    </circle>
+
+    <circle cx="0" cy="0" r="4" fill="#ffffff" opacity="0.4">
+      <animate attributeName="cy" values="0;-7;0" dur="1s" begin="0.3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="1s" begin="0.3s" repeatCount="indefinite"/>
+    </circle>
+
+    <circle cx="12" cy="0" r="4" fill="#ffffff" opacity="0.4">
+      <animate attributeName="cy" values="0;-7;0" dur="1s" begin="0.6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="1s" begin="0.6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+</svg>
+
           <div class="typing-indicator">
+            
+            <!-- <span class="dot"></span>
             <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
+            <span class="dot"></span> -->
           </div>
         </div>
       </div>
@@ -218,7 +315,7 @@
       <div class="custom-input">
         <mat-form-field appearance="fill">
           <mat-label>Type here....</mat-label>
-          <input matInput placeholder="Type here...." [(ngModel)]="searchText" (keydown.enter)="sendUserMessage()" />
+          <input matInput placeholder="" [(ngModel)]="searchText" (keydown.enter)="sendUserMessage()" />
         </mat-form-field>
       </div>
     </div>
