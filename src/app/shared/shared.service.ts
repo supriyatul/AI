@@ -151,6 +151,17 @@ export class SharedService {
         })
       )
   }
+  getProjectsList(data) {
+    return this.http.post<any>(this.API_URL + `v1/analysis/getProjectsList`, data)
+      .pipe(
+        catchError(err => {
+          console.log(err)
+          this.errorHandler(err)
+          return this.err_hand(err);
+
+        })
+      )
+  }
   logOutUser(session_id: string) {
     const params = new URLSearchParams({
       session_id: session_id

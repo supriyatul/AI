@@ -22,10 +22,12 @@ export class SidebarComponent implements OnInit {
   loading = false
   openDropdown: string | null = null;
   isOpen = signal(false);
+  oldProjectExpanded = false;
   dropdownHeights: { [key: string]: number } = {};
   menuItems = signal<MenuItem[]>([])
   primaryMenu: any[] = [
     { project_name: 'New Project', icon: 'New Project.svg', link: '/backend', _id: '' },
+     { project_name: 'Ongoing Project', icon: 'Old Project.svg', link: '/backend/OnGoingProject', _id: '' },
     { project_name: 'Old Project', icon: 'Old Project.svg', link: '/backend/OldProject', _id: '' }
   ];
   secondaryMenu: any[] = [
@@ -79,12 +81,18 @@ export class SidebarComponent implements OnInit {
 
   onMenuClickPrimary(item: any) {
     console.log("item",item);
-    if(item?.project_name == "Old Project"){
-      this.isCollapsed = true
-     
-    }
     this.isCollapsed = true
     this.router.navigate([item.link]);
+  }
+
+  toggleOldProject(event: Event) {
+    event.stopPropagation();
+    this.oldProjectExpanded = !this.oldProjectExpanded;
+  }
+
+  navigateToOldProject() {
+    this.isCollapsed = true;
+    this.router.navigate(['/backend/OldProject']);
   }
   loadItems(id: string) {
     if (this.loading) return; // Prevent concurrent loads

@@ -5,7 +5,7 @@
             <span class="material-symbols-rounded">chevron_left</span>
         </button> -->
         <span href="#" class="header-logo" (click)="toggleSidebar()">
-            <img src="../../assets/images/glob.png" alt="Logo" />
+            <img [src]="isCollapsed ? '../../assets/images/glob.png' : '../../assets/images/Vedaa Logo 1 1.png'" alt="Logo" />
         </span>
     </header>
 
@@ -14,24 +14,28 @@
         <ul class="nav-list primary-nav overflowX">
             <ng-container *ngFor="let item of primaryMenu">
                 <li class="nav-item" title="{{ item.project_name }}">
-                    <a class="nav-link" (click)="onMenuClickPrimary(item)">
-                        <img [src]="'../../assets/images/' + item.icon" />
-                        <!-- <span class="material-symbols-rounded">{{ item.icon }}</span> -->
-                        <span class="nav-label">{{ item.project_name }}</span>
+                    <a class="nav-link" (click)="item.project_name === 'Old Project' ? navigateToOldProject() : onMenuClickPrimary(item)">
+                        <img [src]="'../../assets/images/' + item.icon" (click)="item.project_name === 'Old Project' ? navigateToOldProject() : null" />
+                        <span class="nav-label" (click)="item.project_name === 'Old Project' ? navigateToOldProject() : null">{{ item.project_name }}</span>
+                        <span *ngIf="item.project_name === 'Old Project' && !isCollapsed" class="dropdown-icon material-symbols-rounded" (click)="toggleOldProject($event)">
+                            {{ oldProjectExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+                        </span>
                     </a>
                 </li>
             </ng-container>
 
 
-            <ng-container *ngIf="!isCollapsed">
-                <ng-container *ngFor="let item of menuItems()">
-                    <li class="nav-item">
-                        <a class="nav-link" (click)="onMenuClickPrimary(item)">
-                            <span class="material-symbols-rounded">{{ item.icon }}</span>
-                            <span class="nav-label">{{ item.project_name }}</span>
-                        </a>
-                    </li>
-                </ng-container>
+            <ng-container *ngIf="!isCollapsed && oldProjectExpanded">
+                <div class="old-project-list" style="max-height: 300px; overflow-y: auto;" (scroll)="onScroll($event)">
+                    <ng-container *ngFor="let item of menuItems()">
+                        <li class="nav-item">
+                            <a class="nav-link" (click)="onMenuClickPrimary(item)">
+                                <span class="material-symbols-rounded">{{ item.icon }}</span>
+                                <span class="nav-label">{{ item.project_name }}</span>
+                            </a>
+                        </li>
+                    </ng-container>
+                </div>
             </ng-container>
         </ul>
 

@@ -15,6 +15,7 @@
   h1 {
     font-size: 2.6rem;
     background: linear-gradient(to bottom, #ffffff, #a1a1a1, #5a5a5a);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: 2px;
@@ -75,6 +76,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-family: 'Georama';
 img{
   width: 24px;
     margin-left: 11px;
@@ -106,9 +108,32 @@ img{
     transform: translateY(-6px);
   }
 }
+
+@keyframes rotate360 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 .emoji {
       font-size: 2.2rem;
       margin-left: 8px;
       display: inline-block;
       animation: bounce 1.2s ease-in-out 1.2s both; // bounce after slide
     }
+
+    .gloab_wrap{
+
+    position: fixed;
+    top: 50%;
+    right: 0%;
+    transform: translateY(-50%) translateX(50%);
+    width: 700px;
+    }
+.globe-image {
+  width: 100%;
+  opacity: 0.5;
+  animation: rotate360 10s linear infinite;
+}

@@ -6,7 +6,8 @@ import { SharedService } from '../../shared/shared.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { firstValueFrom } from 'rxjs';
-import * as XLSX from 'xlsx';
+import { WebsocketService } from '../../http-interceptors/websocket.service';
+import { CookieService } from 'ngx-cookie-service';
 
 const CHUNK_SIZE = 8 * 1024 * 1024; // 8mb
 
@@ -117,7 +118,7 @@ export class DashboardComponent {
   currentNode = computed(() => this.messages().filter(e => e.from === 'bot')?.at(-1) || {});
   fileUpload = signal<FileUpload[]>([])
 
-  constructor(private router: Router, private _shared_service: SharedService, private sanitizer: DomSanitizer, private route: ActivatedRoute) { }
+  constructor(private router: Router, private _shared_service: SharedService, private sanitizer: DomSanitizer, private route: ActivatedRoute, private ws: WebsocketService, private cookieService: CookieService) { }
   projectname
   fileuploaded: boolean = false;
   loadProjectData(recordID: string): void {
@@ -546,6 +547,7 @@ export class DashboardComponent {
       const index = this.files.findIndex(f => f.name === file.name);
       const baseName = file.name.substring(0, file.name.lastIndexOf('.'));
       const file_type = baseName.toUpperCase() || 'EXCEL';
+      const session_id = this.cookieService.get('session_id')
 
       this.fileStatus[file.name].status = 'uploading';
       try {
@@ -563,6 +565,7 @@ export class DashboardComponent {
           formData.append('recordID', this.currentNode().recordID);
           formData.append('chunk_index', index.toString());
           formData.append('total_chunks', totalChunks.toString());
+          formData.append('session_id', session_id);
           const response = await firstValueFrom(this._shared_service.uploadChunk(formData));
           if (response.message === 'FAILED') {
             this.fileStatus[file.name] = {
@@ -570,9 +573,18 @@ export class DashboardComponent {
               reason: response.reason
             };
             allSuccess = false;
-          } else if(response.message === 'SUCCESSFUL') {
+          } else if(response.message === 'SUCCESSFUL_FILE_UPLOAD') {
             this.fileStatus[file.name] = { status: 'success' };
             uploadedFiles.push(file.name);
+          }
+          else if(response.message === 'UPLOADING') {
+            this.ws.connect(session_id);
+            this.ws.messages$.subscribe((msg) => {
+              if(msg.message === 'SUCCESSFUL_FILE_UPLOAD') {
+                this.fileStatus[file.name] = { status: 'success' };
+                uploadedFiles.push(file.name);
+              }
+            });
           }
         }
       } catch (err: any) {
@@ -590,6 +602,7 @@ export class DashboardComponent {
     // Check if all files are now successful
     const allNowSuccess = this.files.every(f => this.fileStatus[f.name]?.status === 'success');
     if (allNowSuccess) {
+      this.ws.disconnect();
       alert('✅ All files uploaded successfully!');
       this.allFilesUploaded = true;
       this.disabledSubmit = false;
