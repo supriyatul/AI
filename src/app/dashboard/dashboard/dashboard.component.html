@@ -64,7 +64,7 @@
             </div>
           </div>
         </ng-container>
-        <ng-container *ngIf="msg.input_type === 'file_upload'">
+        <ng-container *ngIf="msg.input_type === 'file_upload' && !msg.filesSubmitted">
           <div class="file-upload">
             <div fxLayout="row" fxLayoutAlign="space-between center">
               <div fxLayout="column" class="lef_up_con">
@@ -78,12 +78,12 @@
              <div class="drop-zone" >
               <!-- <p>📂 Drag & Drop Excel files here</p>
             <p>or</p> -->
-              <button (click)="fileInput.click()" [disabled]="allFilesUploaded">
+              <button (click)="fileInput.click()" [disabled]="allFilesUploaded || msg.filesSubmitted">
                 <img src="../../assets/images/upload.png" alt="Upload Icon" />
                 <div class="drag_drop_cn">Drag & Drop file here or <span>Browse</span> </div>
               </button>
               <input #fileInput type="file" multiple accept=".xls,.xlsx" (change)="onFileBrowse($event)"
-                [disabled]="allFilesUploaded" hidden />
+                [disabled]="allFilesUploaded || msg.filesSubmitted" hidden />
               <!-- Hidden input used to replace a specific file -->
               <input id="replaceInput" type="file" accept=".xls,.xlsx" (change)="onReplaceSelected($event)" hidden />
             </div>

@@ -355,8 +355,15 @@ export class DashboardComponent {
     }
     if (fullText.input_type === "options") {
       this.input_view = false
-    } if (fullText.input_type === 'file_upload') {
-      this.fileuploaded = false
+    }
+    if (fullText.input_type === 'file_upload') {
+      // Reset upload-related state when a new file_upload node appears
+      this.fileuploaded = false;
+      this.files = [];
+      this.fileStatus = {};
+      this.isUploading = false;
+      this.allFilesUploaded = false;
+      this.disabledSubmit = true;
     }
     // Normalize fullText: if it's a string, wrap it into an object with display_message
     const payload = (typeof fullText === 'string' || fullText instanceof String) ? { display_message: fullText } : (fullText || {});
@@ -728,14 +735,53 @@ export class DashboardComponent {
   }
 
   submitFiles(): void {
-    this.disabledSubmit = true
+    this.disabledSubmit = true;
     this._shared_service.getOptions_bot({
       key: 'files_uploaded',
       optionSelected: 'files_uploaded',
       recordID: this.currentNode().recordID
     }).subscribe((res) => {
-      // this.FLOW.update(value => [...value, res]);
-      this.pushBot(res);
+      // Determine success from common response fields
+      const success = !!(
+        (res && (res.status === 'OK' || res.status === 'ok' || res.status === 'success' || res.success === true)) ||
+        (res && (res.message === 'SUCCESS' || res.message === 'SUCCESSFUL' || res.message === 'SUCCESSFUL_FILE_UPLOAD')) ||
+        (res && res.response && (res.response.status === 'OK' || res.response.status === 'success'))
+      );
+
+      if (success) {
+        // On success, mark the related bot message so the UI hides
+        const msgs = [...this.messages()];
+        for (let i = msgs.length - 1; i >= 0; i--) {
+          const m = msgs[i];
+          if (m && m.from === 'bot' && m.input_type === 'file_upload') {
+            msgs[i] = { ...m, filesSubmitted: true };
+            break;
+          }
+        }
+        this.messages.set(msgs);
+
+        // mark overall state as files uploaded/locked
+        this.allFilesUploaded = true;
+        this.disabledSubmit = true;
+
+        // Push the backend response so any `options` returned are rendered as option buttons
+        if (res) {
+          this.pushBot(res);
+        } else {
+          const confirmationText = 'Files submitted successfully.';
+          this.pushBot({ display_message: confirmationText, input_type: 'options', options: [] });
+        }
+      } else {
+        // Not successful — show error feedback (snackbar) and keep UI active
+        const errMsg = res?.response?.message || res?.message || 'Failed to submit files. Please try again.';
+        this._shared_service.opensnacbar(errMsg);
+        this.disabledSubmit = false;
+      }
+    }, (err) => {
+      // Network / server error
+      console.error('submitFiles error', err);
+      this._shared_service.opensnacbar('Failed to submit files. Please try again later.');
+      this.disabledSubmit = false;
     });
   }
   /** Prevent default drag behavior */
